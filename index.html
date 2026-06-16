@@ -1316,6 +1316,56 @@
       gap: 20px;
     }
 
+    .case-narrative-card {
+      display: grid;
+      gap: 14px;
+      border: 1px solid #a7ddd5;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfffd;
+      box-shadow: var(--shadow);
+    }
+
+    .case-narrative-card h3 {
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .case-narrative-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .narrative-step-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .narrative-step-grid span {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .narrative-step-grid strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
     .env-compare-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1617,7 +1667,7 @@
       white-space: nowrap;
     }
 
-    .plain-trajectory-summary {
+    .trajectory-narrative {
       border: 1px solid #ead58b;
       border-radius: 8px;
       padding: 12px;
@@ -1625,7 +1675,7 @@
       background: var(--gold-soft);
     }
 
-    .plain-trajectory-summary strong {
+    .trajectory-narrative strong {
       display: block;
       margin-bottom: 5px;
       color: var(--gold);
@@ -1635,10 +1685,16 @@
       text-transform: uppercase;
     }
 
-    .plain-trajectory-summary p {
+    .trajectory-narrative p {
       color: var(--ink);
       font-size: 13px;
       font-weight: 700;
+    }
+
+    .trajectory-narrative p + p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-weight: 750;
     }
 
     .trajectory-comparison-stack.is-dual .trajectory-inspector,
@@ -1767,6 +1823,7 @@
       .trajectory-comparison-stack.is-dual,
       .env-compare-grid,
       .env-compare-selector,
+      .narrative-step-grid,
       .trajectory-case-strip,
       .trajectory-inspector,
       .action-space {
@@ -1815,6 +1872,7 @@
       .ask-answer-grid,
       .env-compare-grid,
       .env-compare-selector,
+      .narrative-step-grid,
       .trajectory-case-strip,
       .trajectory-detail-grid,
       .trajectory-context,
@@ -1900,7 +1958,7 @@
         <div class="hero">
           <div class="hero-copy">
             <p class="eyebrow">BioStack product</p>
-            <h1>Breast Cancer RL Environment turns breast cancer records into auditable action intelligence.</h1>
+            <h1>Breast Cancer RL Environment turns breast cancer records into auditable clinical action intelligence.</h1>
             <p class="lead">BioStack's Breast Cancer RL Environment converts longitudinal oncology notes into measurable, reward-scored care-action predictions across 22 breast-cancer inpatient-day tasks.</p>
             <div class="badge-row">
               <span class="badge teal">22 day-level tasks</span>
@@ -1959,12 +2017,12 @@
             <strong class="highlight-teal">Observed lift: +27.2 points and +6 matched tasks.</strong>
           </article>
           <article class="mini-card overview-card">
-            <h3>Technical summary</h3>
+            <h3>Technical View</h3>
             <p>Breast Cancer RL Environment gives the model chart state, temporal history, action evidence, safety constraints, vocabulary control, and reward scoring during each clinical decision step.</p>
             <strong class="highlight-blue">Product score: 72.7% co-primary exact across all tasks.</strong>
           </article>
           <article class="mini-card overview-card">
-            <h3>Scoring summary</h3>
+            <h3>Scoring View</h3>
             <p>Complex inpatient records often document multiple reasonable actions, so co-primary scoring preserves strict comparison while recognizing documented co-actions across breast cancer tasks accurately and transparently.</p>
             <strong class="highlight-gold">Safety counters stayed 0 across both tracked categories.</strong>
           </article>
@@ -2137,6 +2195,19 @@
               <span><strong>Allowed Actions</strong>One controlled choice from the 13-action vocabulary.</span>
               <span><strong>Reward Assignment</strong>Strict, co-primary, partial, weighted, and guardrail scoring.</span>
               <span><strong>Review Artifact</strong>A lightweight page showing the complete audited trajectory.</span>
+            </div>
+          </div>
+
+          <div class="case-narrative-card">
+            <div>
+              <h3>Clinical Decision Path</h3>
+              <p>Each case is one hospital day. Baseline reads the prompt and gives one direct answer. Breast Cancer RL Environment first organizes the patient state, checks recent history, reviews action evidence, applies safety constraints, limits the answer to the allowed vocabulary, and then assigns reward against documented care.</p>
+            </div>
+            <div class="narrative-step-grid" aria-label="Clinical trajectory explanation">
+              <span><strong>1. Input</strong>The hospital-day chart state enters the environment.</span>
+              <span><strong>2. Tools</strong>The environment gathers context before the final action.</span>
+              <span><strong>3. Decision</strong>The agent chooses one controlled care action.</span>
+              <span><strong>4. Reward</strong>The answer is scored against ground truth and guardrails.</span>
             </div>
           </div>
         </div>
@@ -2579,7 +2650,8 @@
         baselineMatch: "No match against order_labs_or_diagnostics.",
         baselineMatchClass: "miss",
         baselineSecondaries: ["order_labs_or_diagnostics"],
-        baselinePlainSummary: "Baseline treats the stable post-procedure day mainly as monitoring, so it puts continue_monitoring first and only mentions diagnostics as secondary.",
+        baselineNarrative: "Baseline treats the stable post-procedure day mainly as monitoring, so it puts continue_monitoring first and only mentions diagnostics as secondary.",
+        baselineOutcome: "Outcome: the baseline was close to the care area but did not put the documented diagnostic action first, so it received no reward in this comparison.",
         baselineRewards: [
           ["Strict", 0],
           ["Co-primary", 0],
@@ -2587,7 +2659,8 @@
           ["Weighted", 0]
         ],
         environmentAction: "order_labs_or_diagnostics",
-        environmentPlainSummary: "Breast Cancer RL Environment uses the procedure history, imaging context, and action evidence to keep diagnostics as the primary action, matching the documented care path.",
+        environmentNarrative: "Breast Cancer RL Environment uses the procedure history, imaging context, and action evidence to keep diagnostics as the primary action, matching the documented care path.",
+        environmentOutcome: "Outcome: the environment made diagnostics the primary action, matched ground truth, received full reward, and kept safety counters at zero.",
         environmentReward: "Strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0; safety 0/0.",
         tableReward: "Environment: strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0",
         safety: "Critical miss 0; contraindicated action 0"
@@ -2600,7 +2673,8 @@
         baselineMatch: "No match against pleurodesis_or_chest_tube.",
         baselineMatchClass: "miss",
         baselineSecondaries: ["continue_monitoring"],
-        baselinePlainSummary: "Baseline focuses on the stable pre-discharge status and selects discharge planning, missing that pleural drainage management is the documented primary action.",
+        baselineNarrative: "Baseline focuses on the stable pre-discharge status and selects discharge planning, missing that pleural drainage management is the documented primary action.",
+        baselineOutcome: "Outcome: the baseline recognized discharge context but missed the pleural drainage action that the record documented for that day.",
         baselineRewards: [
           ["Strict", 0],
           ["Co-primary", 0],
@@ -2608,7 +2682,8 @@
           ["Weighted", 0]
         ],
         environmentAction: "pleurodesis_or_chest_tube",
-        environmentPlainSummary: "Breast Cancer RL Environment follows the pleural catheter plan and selects pleurodesis_or_chest_tube, aligning the final action with the documented drainage pathway.",
+        environmentNarrative: "Breast Cancer RL Environment follows the pleural catheter plan and selects pleurodesis_or_chest_tube, aligning the final action with the documented drainage pathway.",
+        environmentOutcome: "Outcome: the environment followed the drainage plan, selected the documented pleural action, received full reward, and kept safety counters at zero.",
         environmentReward: "Strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0; safety 0/0.",
         tableReward: "Environment: strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0",
         safety: "Critical miss 0; contraindicated action 0"
@@ -2621,7 +2696,8 @@
         baselineMatch: "No match against hospice_consult.",
         baselineMatchClass: "miss",
         baselineSecondaries: ["hospice_consult", "continue_monitoring"],
-        baselinePlainSummary: "Baseline recognizes comfort-focused discharge planning, but makes disposition the primary action while hospice_consult remains secondary.",
+        baselineNarrative: "Baseline recognizes comfort-focused discharge planning, but makes disposition the primary action while hospice_consult remains secondary.",
+        baselineOutcome: "Outcome: the baseline noticed hospice-related context, but it did not place hospice_consult as the main documented action.",
         baselineRewards: [
           ["Strict", 0],
           ["Co-primary", 0],
@@ -2629,7 +2705,8 @@
           ["Weighted", 0]
         ],
         environmentAction: "hospice_consult",
-        environmentPlainSummary: "Breast Cancer RL Environment uses the hospice note, comfort medications, and goals-of-care history to select hospice_consult as the primary action.",
+        environmentNarrative: "Breast Cancer RL Environment uses the hospice note, comfort medications, and goals-of-care history to select hospice_consult as the primary action.",
+        environmentOutcome: "Outcome: the environment connected the hospice note, comfort plan, and care transition, matched ground truth, and received full reward.",
         environmentReward: "Strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0; safety 0/0.",
         tableReward: "Environment: strict 1.0; co-primary 1.0; primary/secondary 1.0; weighted 1.0",
         safety: "Critical miss 0; contraindicated action 0"
@@ -2686,7 +2763,8 @@
         label: task.label,
         pathLabel: isEnvironment ? "Breast Cancer RL Environment" : "Baseline",
         pathNote: isEnvironment ? "Tool-supported action selection with clinical context, tools, reward scoring, and guardrails." : "Direct baseline answer from the hospital-day prompt with no environment tool calls.",
-        plainSummary: isEnvironment ? comparison.environmentPlainSummary : comparison.baselinePlainSummary,
+        narrative: isEnvironment ? comparison.environmentNarrative : comparison.baselineNarrative,
+        outcome: isEnvironment ? comparison.environmentOutcome : comparison.baselineOutcome,
         status: isEnvironment ? task.status : "Baseline direct answer",
         prompt: task.prompt,
         context: task.context,
@@ -2796,13 +2874,15 @@
       const status = document.createElement("em");
       status.textContent = selected.status;
       consoleHead.append(code, title, status);
-      const plainSummary = document.createElement("div");
-      plainSummary.className = "plain-trajectory-summary";
-      const plainTitle = document.createElement("strong");
-      plainTitle.textContent = "Plain English Summary";
-      const plainCopy = document.createElement("p");
-      plainCopy.textContent = selected.plainSummary;
-      plainSummary.append(plainTitle, plainCopy);
+      const narrative = document.createElement("div");
+      narrative.className = "trajectory-narrative";
+      const narrativeTitle = document.createElement("strong");
+      narrativeTitle.textContent = "Case Walkthrough";
+      const narrativeCopy = document.createElement("p");
+      narrativeCopy.textContent = selected.narrative;
+      const outcomeCopy = document.createElement("p");
+      outcomeCopy.textContent = selected.outcome;
+      narrative.append(narrativeTitle, narrativeCopy, outcomeCopy);
       const inputTitle = document.createElement("h3");
       inputTitle.textContent = "Exact Model Input";
       const prompt = document.createElement("p");
@@ -2824,7 +2904,7 @@
         if (!selected.isEnvironment) chip.classList.add("no-tools");
         toolRoot.appendChild(chip);
       });
-      consoleCard.append(consoleHead, plainSummary, inputTitle, prompt, context, toolRoot);
+      consoleCard.append(consoleHead, narrative, inputTitle, prompt, context, toolRoot);
 
       const outcome = document.createElement("aside");
       outcome.className = "trajectory-outcome";
